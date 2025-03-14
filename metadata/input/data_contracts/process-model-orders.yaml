@@ -1,0 +1,121 @@
+dataContractSpecification: 1.1.0
+id: urn:datacontract:project:jaffle-shop:dbt:process-model:orders
+info:
+  title: Jaffle Shop PROCESS Orders Data Contract
+  version: 2025.03.14
+  description: Data Contract for Example Jaffle Shop PROCESS Orders Data provided
+    by dbt/ created by dbt build.
+  owner: enabling-team
+  dbt_version: 1.9.2
+terms:
+  usage: The Consumer may use the Data solely for the purpose of building analytical
+    data products internally to Mars. The Consumer shall not use the Data for any
+    other purpose without the prior written consent of the Provider.
+  limitations: The Consumer shall not share the Data with any third party without
+    the prior written consent from the Retailer/ Vendor.
+  billing: The Consumer can use the Data at no costs but those indirectly related
+    to platform fees.
+  noticePeriod: The Producer shall notify the Consumer of any changes to the Data
+    within 5 days of the change.
+models:
+  orders:
+    description: Order overview data mart, offering key details for each order inlcluding
+      if it's a customer's first order and a food vs. drink item breakdown. One row
+      per order.
+    fields:
+      order_id:
+        type: string
+        required: true
+        primaryKey: true
+        unique: true
+        description: The unique key of the orders mart.
+      location_id:
+        type: string
+        references: stg_locations.location_id
+        description: The foreign key relating to the location where the order was
+          placed.
+      customer_id:
+        type: string
+        references: stg_customers.customer_id
+        description: The foreign key relating to the customer who placed the order.
+      subtotal_cents:
+        type: bigint
+        description: The subtotal of the order in cents.
+      tax_paid_cents:
+        type: bigint
+        description: The tax portion of the order in cents.
+      order_total_cents:
+        type: bigint
+        description: The total amount of the order in cents including tax.
+      subtotal:
+        type: double
+        description: The subtotal of the order in USD.
+      tax_paid:
+        type: double
+        description: The tax portion of the order in USD.
+      order_total:
+        type: double
+        description: The total amount of the order in USD including tax.
+      ordered_at:
+        type: timestamp
+        description: The timestamp the order was placed at.
+      order_cost:
+        type: double
+        description: The sum of supply expenses to fulfill the order.
+      order_items_subtotal:
+        type: double
+        description: The sum of the order item subtotals.
+      count_food_items:
+        type: bigint
+        description: The number of food items in the order.
+      count_drink_items:
+        type: bigint
+        description: The number of drink items in the order.
+      count_order_items:
+        type: bigint
+        description: The total number of items in the order.
+      is_food_order:
+        type: boolean
+        description: A boolean indicating if this order included any food items.
+      is_drink_order:
+        type: boolean
+        description: A boolean indicating if this order included any drink items.
+      customer_order_number:
+        type: int
+        description: The order number for the customer.
+    tags: []
+servicelevels:
+  availability:
+    description: The server is available during support hours
+    percentage: 99.9%
+  retention:
+    description: Data is retained for three years in hot storage, and thereafter archived
+      in cold storage
+    period: P3Y
+    unlimited: false
+  latency:
+    description: Data is available within 24 hours after the approval is requested
+    threshold: 24h
+  freshness:
+    description: The refresh cadence of this data is weekly.
+    threshold: 1w
+  frequency:
+    description: Data is updated weekly on Monday.
+    type: batch
+    interval: weekly
+    cron: 0 0 1 * *
+  support:
+    description: Support team under P5 to P3 capacity is reachable between 6:00AM
+      - 3:00PM UTC Monday through Friday.
+    time: 6:00AM to 3:00PM UTC on business days.
+    responseTime: 1h
+  backup:
+    description: Data snapshots are taken once a week, every Monday after data availability.
+    interval: weekly
+    cron: 0 0 1 * 0
+servers:
+  dna_databricks_dev:
+    type: databricks
+    host: adb-4057509338801929.9.azuredatabricks.net
+    catalog: datagovernance_mvp
+    schema: jaffle_shop

@@ -1,0 +1,115 @@
+dataContractSpecification: 1.1.0
+id: urn:datacontract:project:jaffle-shop:dbt-seed:raw-model:calendar
+info:
+  title: Jaffle Shop RAW Calendar Data Contract
+  version: 2025.03.07
+  description: Data Contract for Example Jaffle Shop RAW Calendar Data provided by
+    dbt/ created by dbt seed.
+  owner: enabling-team
+terms:
+  usage: The Consumer may use the Data solely for the purpose of building analytical
+    data products internally to Mars. The Consumer shall not use the Data for any
+    other purpose without the prior written consent of the Provider.
+  limitations: The Consumer shall not share the Data with any third party without
+    the prior written consent from the Retailer/ Vendor.
+  billing: The Consumer can use the Data at no costs but those indirectly related
+    to platform fees.
+  noticePeriod: The Producer shall notify the Consumer of any changes to the Data
+    within 5 days of the change.
+models:
+  raw_calendar:
+    description: Gregorian Calendar defined parametrically by years broken out by
+      13 periods of 4 weeks starting Sunday, and ending Saturday. In cases where a
+      gregorian year ends prior to the calendar with between 5 or 7 days remaining,
+      and additional week 5 is added to the year.
+    namespace: jaffle_shop
+    fields:
+      calendar_id:
+        type: date
+        required: false
+        primaryKey: true
+        unique: false
+        description: Calendar date as table ID.
+      calendar_quarter:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Calendar quarter (1-4).
+      calendar_month:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Calendar month (1-12).
+      calendar_week_of_year:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Calendar week of year (1-52).
+      calendar_day_of_year:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Calendar day of year (1-365/366).
+      gregorian_year:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Gregorian calendar year.
+      gregorian_period:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Gregorian calendar period (1-13).
+      gregorian_week:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Gregorian calendar week (1-4/5).
+      gregorian_day:
+        type: int
+        required: true
+        primaryKey: false
+        unique: false
+        description: Gregorian calendar day (1-7).
+servicelevels:
+  availability:
+    description: The server is available during support hours
+    percentage: 99.9%
+  retention:
+    description: Data is retained for three years in hot storage, and thereafter archived
+      in cold storage
+    period: P3Y
+    unlimited: false
+  latency:
+    description: Data is available within 24 hours after the approval is requested
+    threshold: 24h
+  freshness:
+    description: The refresh cadence of this data is weekly.
+    threshold: 1w
+  frequency:
+    description: Data is updated weekly on Monday.
+    type: batch
+    interval: weekly
+    cron: 0 0 1 * *
+  support:
+    description: Support team under P5 to P3 capacity is reachable between 6:00AM
+      - 3:00PM UTC Monday through Friday.
+    time: 6:00AM to 3:00PM UTC on business days.
+    responseTime: 1h
+  backup:
+    description: Data snapshots are taken once a week, every Monday after data availability.
+    interval: weekly
+    cron: 0 0 1 * 0
+servers:
+  dna_databricks_dev:
+    type: databricks
+    host: adb-4057509338801929.9.azuredatabricks.net
+    catalog: datagovernance_mvp
+    schema: jaffle_shop_bronze

@@ -1,0 +1,14 @@
+id: db634302-8b2e-de74-05b3-090feac7c14f
+info:
+  purpose: Producer Initiated Usage Agreement with dbt
+  description: Usage agreement for $producerPortName with $contractId
+  startDate: '2025-03-14'
+provider:
+  dataProductId: urn:dataproduct:project:jaffle-shop:dbt:jaffle-shop-output
+  outputPortId: urn:datacontract:project:jaffle-shop:dbt:process-model:orders-databricks
+  teamId: enabling-team
+consumer:
+  dataProductId: urn:dataproduct:project:jaffle-shop:dbt:jaffle-shop-output
+  teamId: enabling-team
+tags:
+  - POC

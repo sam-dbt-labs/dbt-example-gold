@@ -1,0 +1,146 @@
+version: 2
+models:
+  - name: sales_finance_pl
+    description: S&F table for accounting profit/loss (PL).
+    columns:
+      - name: calendar_id
+        data_type: date
+        description: The unique key for each calendar date.
+        data_tests:
+          - not_null
+      
+      - name: location_id
+        data_type: string
+        decription: Jaffle Shop Location ID.
+        data_tests:
+          - not_null
+
+      - name: gsv
+        data_type: float
+        description: Mock gross sales value (GSV).
+        data_tests:
+          - not_null
+      
+      - name: trade
+        data_type: float
+        description: Mock trade expenditure.
+        data_tests:
+          - not_null
+      
+      - name: nsv
+        data_type: float
+        description: Mock net sales value (NSV).
+        data_tests:
+          - not_null
+      
+      - name: cogs
+        data_type: float
+        description: Mock cost of goods sold (COGS).
+        data_tests:
+          - not_null
+      
+      - name: mac
+        data_type: float
+        description: Mock margin after conversion (MAC).
+        data_tests:
+          - not_null
+
+semantic_models:
+  - name: sales_finance_pl
+    defaults:
+      agg_time_dimension: calendar_date
+    description: |
+      S&F semantic model for accounting profit/loss (PL) + calculations.
+    model: ref('sales_finance_pl')
+    entities:
+      - name: calendar_id
+        type: primary
+        expr: calendar_id
+
+      - name: location
+        type: foreign
+        expr: location_id
+    
+    dimensions:
+      - name: calendar_date
+        expr: calendar_id
+        type: time
+        type_params:
+          time_granularity: day
+      
+    measures:
+      - name: gsv
+        description: The mock calculation of gross sales value (GSV).
+        agg: sum
+      - name: trade
+        description: The mock calculation of trade expenditure.
+        agg: sum
+      - name: nsv
+        description: The mock calculation of net sales value (NSV).
+        agg: sum
+      - name: cogs
+        description: The mock calculation of cost of goods sold (COGS).
+        agg: sum
+      - name: mac
+        description: The mock calculation of margin after conversion (MAC).
+        agg: sum
+      - name: trade_rate
+        description: The mock calculation of trade rate.
+        expr: trade_rate
+        agg: max
+      - name: mac_rate
+        description: The mock calculation of margin after conversion rate.
+        expr: mac_rate
+        agg: max
+
+metrics:
+  - name: gsv
+    description: The mock calculation of gross sales value (GSV).
+    type: simple
+    label: GSV
+    type_params:
+      measure: gsv
+  
+  - name: trade
+    description: The mock calculation of trade expenditure.
+    type: simple
+    label: Trade
+    type_params:
+      measure: trade
+
+  - name: nsv
+    description: The mock calculation of net sales value (NSV).
+    type: simple
+    label: NSV
+    type_params:
+      measure: nsv
+  
+  - name: cogs
+    description: The mock calculation of cost of goods sold (COGS).
+    type: simple
+    label: COGS
+    type_params:
+      measure: cogs
+
+  - name: mac
+    description: The mock calculation of margin after conversion (MAC).
+    type: simple
+    label: MAC
+    type_params:
+      measure: mac
+  
+  - name: trade_rate
+    type: ratio
+    label: Trade %
+    type_params:
+      numerator: trade
+      denominator: gsv
+      measure: trade_rate
+  
+  - name: mac_rate
+    type: ratio
+    label: Mac %
+    type_params:
+      numerator: mac
+      denominator: gsv
+      measure: mac_rate

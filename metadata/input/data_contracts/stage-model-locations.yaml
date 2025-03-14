@@ -1,0 +1,75 @@
+dataContractSpecification: 1.1.0
+id: urn:datacontract:project:jaffle-shop:dbt:stage-model:locations
+info:
+  title: Jaffle Shop STAGE Locations Data Contract
+  version: 2025.03.14
+  description: Data Contract for Example Jaffle Shop STAGE Locations Data provided
+    by dbt/ created by dbt seed.
+  owner: enabling-team
+  dbt_version: 1.9.2
+terms:
+  usage: The Consumer may use the Data solely for the purpose of building analytical
+    data products internally to Mars. The Consumer shall not use the Data for any
+    other purpose without the prior written consent of the Provider.
+  limitations: The Consumer shall not share the Data with any third party without
+    the prior written consent from the Retailer/ Vendor.
+  billing: The Consumer can use the Data at no costs but those indirectly related
+    to platform fees.
+  noticePeriod: The Producer shall notify the Consumer of any changes to the Data
+    within 5 days of the change.
+models:
+  stg_locations:
+    description: List of open locations with basic cleaning and transformation applied,
+      one row per location.
+    fields:
+      location_id:
+        type: string
+        required: true
+        primaryKey: true
+        unique: true
+        description: The unique key of the locations mart.
+      location_name:
+        type: string
+        description: Location full name.
+      tax_rate:
+        type: double
+        description: Applicable sales tax rate based on location.
+      opened_date:
+        type: timestamp
+        description: The timestamp when a location first opened.
+    tags: []
+servicelevels:
+  availability:
+    description: The server is available during support hours
+    percentage: 99.9%
+  retention:
+    description: Data is retained for three years in hot storage, and thereafter archived
+      in cold storage
+    period: P3Y
+    unlimited: false
+  latency:
+    description: Data is available within 24 hours after the approval is requested
+    threshold: 24h
+  freshness:
+    description: The refresh cadence of this data is weekly.
+    threshold: 1w
+  frequency:
+    description: Data is updated weekly on Monday.
+    type: batch
+    interval: weekly
+    cron: 0 0 1 * *
+  support:
+    description: Support team under P5 to P3 capacity is reachable between 6:00AM
+      - 3:00PM UTC Monday through Friday.
+    time: 6:00AM to 3:00PM UTC on business days.
+    responseTime: 1h
+  backup:
+    description: Data snapshots are taken once a week, every Monday after data availability.
+    interval: weekly
+    cron: 0 0 1 * 0
+servers:
+  dna_databricks_dev:
+    type: databricks
+    host: adb-4057509338801929.9.azuredatabricks.net
+    catalog: datagovernance_mvp
+    schema: jaffle_shop

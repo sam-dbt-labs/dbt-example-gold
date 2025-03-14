@@ -1,0 +1,27 @@
+version: 2
+sources:
+- name: urn:datacontract:project:jaffle-shop:dbt:stage-model:customers
+  meta:
+    owner: enabling-team
+  description: Data Contract for Example Jaffle Shop STAGE Customers Data provided
+    by dbt/ created by dbt seed.
+  database: null
+  schema: jaffle_shop_silver
+  tables:
+  - name: stg_customers
+    description: Customer data with basic cleaning and transformation applied, one
+      row per customer.
+    columns:
+    - name: customer_id
+      data_tests:
+      - not_null:
+          config:
+            alias: stg_customers_customer_id_not_null
+      - unique:
+          config:
+            alias: stg_customers_customer_id_unique
+      data_type: STRING
+      description: The unique key for each customer.
+    - name: customer_name
+      data_type: STRING
+      description: The full name of the customer.

@@ -1,0 +1,90 @@
+version: 2
+sources:
+- name: urn:datacontract:project:jaffle-shop:dbt:process-model:orders
+  meta:
+    owner: enabling-team
+  description: Data Contract for Example Jaffle Shop PROCESS Orders Data provided
+    by dbt/ created by dbt build.
+  database: null
+  schema: jaffle_shop_silver
+  tables:
+  - name: orders
+    description: Order overview data mart, offering key details for each order inlcluding
+      if it's a customer's first order and a food vs. drink item breakdown. One row
+      per order.
+    columns:
+    - name: order_id
+      data_tests:
+      - not_null:
+          config:
+            alias: orders_order_id_not_null
+      - unique:
+          config:
+            alias: orders_order_id_unique
+      data_type: STRING
+      description: The unique key of the orders mart.
+    - name: location_id
+      data_tests:
+      - relationships:
+          to: source("urn:datacontract:project:jaffle-shop:dbt:stage-model:locations",
+            "stg_locations")
+          field: location_id
+          config:
+            alias: orders_location_id_to_stg_locations_location_id
+      data_type: STRING
+      description: The foreign key relating to the location where the order was placed.
+    - name: customer_id
+      data_tests:
+      - relationships:
+          to: source("urn:datacontract:project:jaffle-shop:dbt:stage-model:customers",
+            "stg_customers")
+          field: customer_id
+          config:
+            alias: orders_customer_id_to_stg_customers_customer_id
+      data_type: STRING
+      description: The foreign key relating to the customer who placed the order.
+    - name: subtotal_cents
+      data_type: BIGINT
+      description: The subtotal of the order in cents.
+    - name: tax_paid_cents
+      data_type: BIGINT
+      description: The tax portion of the order in cents.
+    - name: order_total_cents
+      data_type: BIGINT
+      description: The total amount of the order in cents including tax.
+    - name: subtotal
+      data_type: DOUBLE
+      description: The subtotal of the order in USD.
+    - name: tax_paid
+      data_type: DOUBLE
+      description: The tax portion of the order in USD.
+    - name: order_total
+      data_type: DOUBLE
+      description: The total amount of the order in USD including tax.
+    - name: ordered_at
+      data_type: TIMESTAMP
+      description: The timestamp the order was placed at.
+    - name: order_cost
+      data_type: DOUBLE
+      description: The sum of supply expenses to fulfill the order.
+    - name: order_items_subtotal
+      data_type: DOUBLE
+      description: The sum of the order item subtotals.
+    - name: count_food_items
+      data_type: BIGINT
+      description: The number of food items in the order.
+    - name: count_drink_items
+      data_type: BIGINT
+      description: The number of drink items in the order.
+    - name: count_order_items
+      data_type: BIGINT
+      description: The total number of items in the order.
+    - name: is_food_order
+      data_type: BOOLEAN
+      description: A boolean indicating if this order included any food items.
+    - name: is_drink_order
+      data_type: BOOLEAN
+      description: A boolean indicating if this order included any drink items.
+    - name: customer_order_number
+      data_type: INT
+      description: The order number for the customer.

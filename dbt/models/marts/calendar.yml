@@ -1,0 +1,207 @@
+version: 2
+models:
+  - name: calendar
+    description: Calendar data with gregorian attributes, and time slicers for Dashboards.
+    time_spine:
+      standard_granularity_column: calendar_id
+      custom_granularities:
+        - name: calendar_year
+          column_name: calendar_year
+        - name: calendar_quarter
+          column_name: calendar_quarter
+        - name: calendar_month
+          column_name: calendar_month
+        - name: calendar_week_of_year
+          column_name: calendar_week_of_year
+        - name: gregorian_year
+          column_name: gregorian_year
+        - name: gregorian_period
+          column_name: gregorian_period
+        - name: gregorian_week
+          column_name: gregorian_week
+    
+    columns:
+      - name: calendar_id
+        data_type: date
+        granularity: day
+        description: The unique key for each calendar date.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: calendar_year
+        data_type: int
+        description: The calendar year in relation to calendar_id.
+        data_tests:
+          - not_null
+ 
+      - name: calendar_quarter
+        data_type: int
+        description: The calendar quarter in relation to calendar_id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4]
+              quote: false
+
+      - name: calendar_month
+        data_type: int
+        description: The calendar month in relation to calendar_id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+              quote: false
+
+      - name: calendar_week_of_year
+        data_type: int
+        description: The calendar week of year in relation to calendar_id.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 53
+
+      - name: calendar_day_of_year
+        data_type: int
+        description: The calendar day of year in relation to calendar_id.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 366
+
+      - name: gregorian_year
+        data_type: int
+        description: The gregorian year in relation to calendar_id.
+        data_tests:
+          - not_null
+      
+      - name: gregorian_quarter
+        data_type: int
+        description: The gregorian quarter in relation to calendar_id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4]
+              quote: false
+
+      - name: gregorian_period
+        data_type: int
+        description: The gregorian period in relation to calendar_id.
+        data_tests:
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+              quote: false
+
+      - name: gregorian_week
+        data_type: int
+        description: The gregorian week of period in relation to calendar_id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+              quote: false
+
+      - name: gregorian_day
+        data_type: int
+        description: The gregorian day of week in relation to calendar_id.
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7]
+              quote: false
+
+      - name: gregorian_year_flag
+        data_type: string
+        description: A slicer dimension describing the gregorian year.
+        data_tests:
+          - accepted_values:
+              values: ['Current Year', 'Previous Year', '2 Years Ago']
+
+      - name: gregorian_period_flag
+        data_type: string
+        description: A slicer dimension describing the gregorian period.
+        data_tests:
+          - accepted_values:
+              values: ['Current Period', 'Previous Period', '2 Periods Ago']
+
+      - name: gregorian_year_progress_flag
+        data_type: string
+        description: A slicer dimension describing the gregorian aggregates within the year.
+        data_tests:
+          - accepted_values:
+              values: ['Year to Date', 'Year to Go']
+
+      - name: gregorian_period_progress_flag
+        data_type: string
+        description: A slicer dimension describing the gregorian aggregates within the period.
+        data_tests:
+          - accepted_values:
+              values: ['Current Business Day', 'Period to Date', 'Period to Go']
+
+semantic_models:
+  - name: calendar
+    defaults:
+      agg_time_dimension: calendar_date
+    description: |
+      Calendar data with gregorian attributes, and time slicers for Dashboards.
+    model: ref('calendar')
+    
+    #entities:
+    #  - name: calendar_id
+    #    type: primary
+    #    expr: calendar_id
+
+    dimensions:
+      - name: calendar_date
+        expr: calendar_id
+        type: time
+        type_params:
+          time_granularity: day
+      
+      - name: calendar_quarter_str
+        type: categorical
+        expr: CONCAT('Q', CAST(calendar_quarter AS VARCHAR))
+
+      - name: calendar_month_str
+        type: categorical
+        expr: DATE_FORMAT(calendar_id, 'MMMM')
+      
+      - name: gregorian_quarter_str
+        type: categorical
+        expr: CONCAT('Q', CAST(gregorian_quarter AS VARCHAR))
+      
+      - name: gregorian_period_str
+        type: categorical
+        expr: CONCAT('P', CAST(gregorian_period AS VARCHAR))
+      
+      - name: gregorian_week_str
+        type: categorical
+        expr: CONCAT('W', CAST(gregorian_week AS VARCHAR))
+      
+      - name: gregorian_day_str
+        type: categorical
+        expr: CONCAT('D', CAST(gregorian_day AS VARCHAR))
+      
+      - name: gregorian_year_flag
+        type: categorical
+        expr: gregorian_year_flag
+      
+      - name: gregorian_period_flag
+        type: categorical
+        expr: gregorian_period_flag
+      
+      - name: gregorian_year_progress_flag
+        type: categorical
+        expr: gregorian_year_progress_flag
+      
+      - name: gregorian_period_progress_flag
+        type: categorical
+        expr: gregorian_period_progress_flag
+      
+      - name: gregorian_id_str
+        type: categorical
+        expr: CONCAT(gregorian_year, '-P', gregorian_period, '-W', gregorian_week, '-D', gregorian_day)
+    
+    primary_entity: calendar_date

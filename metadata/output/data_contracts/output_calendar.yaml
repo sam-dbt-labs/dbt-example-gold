@@ -1,0 +1,118 @@
+dataContractSpecification: 1.1.0
+id: urn:datacontract:project:jaffle-shop:dbt:output-model:calendar
+info:
+  title: Jaffle Shop OUTPUT Calendar Data Contract
+  version: 2025.03.14
+  description: Data Contract for Example Jaffle Shop OUTPUT Calendar Data provided
+    by Mars/ created by dbt build.
+  owner: enabling-team
+  dbt_version: 1.9.3
+terms:
+  usage: The Consumer may use the Data solely for the purpose of building analytical
+    data products internally to Mars. The Consumer shall not use the Data for any
+    other purpose without the prior written consent of the Provider.
+  limitations: The Consumer shall not share the Data with any third party without
+    the prior written consent from the Retailer/ Vendor.
+  billing: The Consumer can use the Data at no costs but those indirectly related
+    to platform fees.
+  noticePeriod: The Producer shall notify the Consumer of any changes to the Data
+    within 5 days of the change.
+models:
+  calendar:
+    description: Calendar data with gregorian attributes, and time slicers for Dashboards.
+    fields:
+      calendar_id:
+        type: date
+        required: true
+        primaryKey: true
+        unique: true
+        description: The unique key for each calendar date.
+      calendar_year:
+        type: int
+        required: true
+        description: The calendar year in relation to calendar_id.
+      calendar_quarter:
+        type: int
+        required: true
+        description: The calendar quarter in relation to calendar_id.
+      calendar_month:
+        type: int
+        required: true
+        description: The calendar month in relation to calendar_id.
+      calendar_week_of_year:
+        type: int
+        required: true
+        description: The calendar week of year in relation to calendar_id.
+      calendar_day_of_year:
+        type: int
+        required: true
+        description: The calendar day of year in relation to calendar_id.
+      gregorian_year:
+        type: int
+        required: true
+        description: The gregorian year in relation to calendar_id.
+      gregorian_quarter:
+        type: int
+        required: true
+        description: The gregorian quarter in relation to calendar_id.
+      gregorian_period:
+        type: int
+        description: The gregorian period in relation to calendar_id.
+      gregorian_week:
+        type: int
+        required: true
+        description: The gregorian week of period in relation to calendar_id.
+      gregorian_day:
+        type: int
+        required: true
+        description: The gregorian day of week in relation to calendar_id.
+      gregorian_year_flag:
+        type: string
+        description: A slicer dimension describing the gregorian year.
+      gregorian_period_flag:
+        type: string
+        description: A slicer dimension describing the gregorian period.
+      gregorian_year_progress_flag:
+        type: string
+        description: A slicer dimension describing the gregorian aggregates within
+          the year.
+      gregorian_period_progress_flag:
+        type: string
+        description: A slicer dimension describing the gregorian aggregates within
+          the period.
+    tags: []
+servicelevels:
+  availability:
+    description: The server is available during support hours
+    percentage: 99.9%
+  retention:
+    description: Data is retained for three years in hot storage, and thereafter archived
+      in cold storage
+    period: P3Y
+    unlimited: false
+  latency:
+    description: Data is available within 24 hours after the approval is requested
+    threshold: 24h
+  freshness:
+    description: The refresh cadence of this data is weekly.
+    threshold: 1w
+  frequency:
+    description: Data is updated weekly on Monday.
+    type: batch
+    interval: weekly
+    cron: 0 0 1 * *
+  support:
+    description: Support team under P5 to P3 capacity is reachable between 6:00AM
+      - 3:00PM UTC Monday through Friday.
+    time: 6:00AM to 3:00PM UTC on business days.
+    responseTime: 1h
+  backup:
+    description: Data snapshots are taken once a week, every Monday after data availability.
+    interval: weekly
+    cron: 0 0 1 * 0
+servers:
+  dna_databricks_dev:
+    type: databricks
+    host: adb-4057509338801929.9.azuredatabricks.net
+    catalog: datagovernance_mvp
+    schema: jaffle_shop

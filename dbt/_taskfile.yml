@@ -1,0 +1,88 @@
+version: "3"
+
+tasks:
+  _venv:
+    internal: true
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - python3 -m venv .venv
+
+  _install:
+    internal: true
+    deps: [ _venv ]
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - source .venv/bin/activate && python3 -m pip install --upgrade pip --progress-bar off > /dev/null
+      - source .venv/bin/activate && python3 -m pip install -r dbt/requirements.txt --progress-bar off > /dev/null
+      - source .venv/bin/activate && python3 -m pip install dbt-core --progress-bar off > /dev/null
+  
+  _install_databricks:
+    internal: true
+    dir: '{{.USER_WORKING_DIR}}'
+    deps: [ _install ]
+    dotenv: [ '{{.USER_WORKING_DIR}}/.env', '{{.HOME}}/creds/dcm.secrets' ]
+    cmds:
+      - source .venv/bin/activate && python3 -m pip install dbt-databricks==1.9.6 --progress-bar off > /dev/null
+  
+  _install_snowflake:
+    internal: true
+    dir: '{{.USER_WORKING_DIR}}'
+    deps: [ _install ]
+    cmds:
+      - source .venv/bin/activate && python3 -m pip install dbt-snowflake==1.9.1 --progress-bar off > /dev/null
+  
+  _clean_snowflake_database:
+    internal: true
+    dotenv: [ '{{.USER_WORKING_DIR}}/.env', '{{.HOME}}/creds/snowflake.secrets' ]
+    cmds:
+      - cmd: snow object drop schema ${DBT_ENV_SCHEMA}_transform --database=${DBT_ENV_DATABASE} 
+        ignore_error: true
+  
+  _clean_databricks_database:
+    internal: true
+    dotenv: [ '{{.USER_WORKING_DIR}}/.env', '{{.HOME}}/creds/databricks.secrets' ]
+    cmds:
+      - cmd: databricks schemas delete ${DBT_ENV_DATABASE}.${DBT_ENV_SCHEMA}_transform --force
+        ignore_error: true
+   
+  build_databricks:
+    dir: '{{.USER_WORKING_DIR}}'
+    deps: [ _install_databricks ]
+    dotenv: [ '{{.USER_WORKING_DIR}}/.env', '{{.HOME}}/creds/dbt.secrets' ]
+    cmds:
+      - |
+        source .venv/bin/activate && dbt debug \
+          --project-dir dbt \
+          --profiles-dir dbt/profiles/databricks \
+          --target ${DBT_ENV_TARGET} > dbt/logs/dbt_databricks_${DBT_ENV_TARGET}_config.log
+      - |
+        source .venv/bin/activate && dbt build \
+          --project-dir dbt \
+          --profiles-dir dbt/profiles/databricks \
+          --target ${DBT_ENV_TARGET}
+  
+  build_snowflake:
+    dir: '{{.USER_WORKING_DIR}}'
+    deps: [ _install_snowflake ]
+    dotenv: [ '{{.USER_WORKING_DIR}}/.env', '{{.HOME}}/creds/dbt.secrets' ]
+    cmds:
+      - |
+        source .venv/bin/activate && dbt debug \
+          --project-dir dbt \
+          --profiles-dir dbt/profiles/snowflake \
+          --target ${DBT_ENV_TARGET} > dbt/logs/dbt_snowflake_${DBT_ENV_TARGET}_config.log
+      - |
+        source .venv/bin/activate && dbt build \
+          --project-dir dbt \
+          --profiles-dir dbt/profiles/snowflake \
+          --target ${DBT_ENV_TARGET}
+  
+  clean:
+    dir: '{{.USER_WORKING_DIR}}'
+    deps: [ _clean_databricks_database, _clean_snowflake_database ]
+    dotenv: [ '{{.USER_WORKING_DIR}}/.env', '{{.HOME}}/creds/dbt.secrets' ]
+    cmds:
+      - cmd: rm dbt/logs/dbt_databricks_*.log
+        ignore_error: true
+      - cmd: rm dbt/logs/dbt_snowflake_*.log
+        ignore_error: true

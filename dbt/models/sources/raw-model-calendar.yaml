@@ -1,0 +1,75 @@
+version: 2
+sources:
+- name: urn:datacontract:project:jaffle-shop:dbt-seed:raw-model:calendar
+  meta:
+    owner: enabling-team
+  description: Data Contract for Example Jaffle Shop RAW Calendar Data provided by
+    dbt/ created by dbt seed.
+  database: null
+  schema: jaffle_shop_bronze
+  tables:
+  - name: raw_calendar
+    description: Gregorian Calendar defined parametrically by years broken out by
+      13 periods of 4 weeks starting Sunday, and ending Saturday. In cases where a
+      gregorian year ends prior to the calendar with between 5 or 7 days remaining,
+      and additional week 5 is added to the year.
+    columns:
+    - name: calendar_id
+      data_type: DATE
+      description: Calendar date as table ID.
+    - name: calendar_quarter
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_calendar_quarter_not_null
+      data_type: INT
+      description: Calendar quarter (1-4).
+    - name: calendar_month
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_calendar_month_not_null
+      data_type: INT
+      description: Calendar month (1-12).
+    - name: calendar_week_of_year
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_calendar_week_of_year_not_null
+      data_type: INT
+      description: Calendar week of year (1-52).
+    - name: calendar_day_of_year
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_calendar_day_of_year_not_null
+      data_type: INT
+      description: Calendar day of year (1-365/366).
+    - name: gregorian_year
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_gregorian_year_not_null
+      data_type: INT
+      description: Gregorian calendar year.
+    - name: gregorian_period
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_gregorian_period_not_null
+      data_type: INT
+      description: Gregorian calendar period (1-13).
+    - name: gregorian_week
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_gregorian_week_not_null
+      data_type: INT
+      description: Gregorian calendar week (1-4/5).
+    - name: gregorian_day
+      data_tests:
+      - not_null:
+          config:
+            alias: raw_calendar_gregorian_day_not_null
+      data_type: INT
+      description: Gregorian calendar day (1-7).

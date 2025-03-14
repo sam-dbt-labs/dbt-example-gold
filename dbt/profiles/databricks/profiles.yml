@@ -1,0 +1,20 @@
+default:
+  target: "{{ env_var('DBT_ENV_TARGET') }}"
+  outputs:
+    dev:
+      type: "databricks"
+      catalog: "{{ env_var('DBT_ENV_DATABASE') }}" #optional catalog name if you are using Unity Catalog
+      schema: "{{ env_var('DBT_ENV_SCHEMA') }}" # Required
+      host: "{{ env_var('DBT_ENV_SECRET_DATABRICKS_HOST') }}" # Required
+      http_path: "{{ env_var('DBT_ENV_SECRET_DATABRICKS_CLUSTER_HTTP_PATH') }}" # Required
+      token: "{{ env_var('DBT_ENV_SECRET_DATABRICKS_TOKEN') }}" # Required Personal Access Token (PAT) if using token-based authentication
+      threads: 2
+    
+    prod:
+      type: "databricks"
+      catalog: "{{ env_var('DBT_ENV_DATABASE') }}" #optional catalog name if you are using Unity Catalog
+      schema: "{{ env_var('DBT_ENV_SCHEMA') }}" # Required
+      host: "{{ env_var('DBT_ENV_SECRET_DATABRICKS_HOST') }}" # Required
+      http_path: "{{ env_var('DBT_ENV_SECRET_DATABRICKS_CLUSTER_HTTP_PATH') }}" # Required
+      token: "{{ env_var('DBT_ENV_SECRET_DATABRICKS_TOKEN') }}" # Required Personal Access Token (PAT) if using token-based authentication
+      threads: 2

@@ -1,0 +1,33 @@
+version: 2
+sources:
+- name: urn:datacontract:project:jaffle-shop:dbt:stage-model:locations
+  meta:
+    owner: enabling-team
+  description: Data Contract for Example Jaffle Shop STAGE Locations Data provided
+    by dbt/ created by dbt seed.
+  database: null
+  schema: jaffle_shop_silver
+  tables:
+  - name: stg_locations
+    description: List of open locations with basic cleaning and transformation applied,
+      one row per location.
+    columns:
+    - name: location_id
+      data_tests:
+      - not_null:
+          config:
+            alias: stg_locations_location_id_not_null
+      - unique:
+          config:
+            alias: stg_locations_location_id_unique
+      data_type: STRING
+      description: The unique key of the locations mart.
+    - name: location_name
+      data_type: STRING
+      description: Location full name.
+    - name: tax_rate
+      data_type: DOUBLE
+      description: Applicable sales tax rate based on location.
+    - name: opened_date
+      data_type: TIMESTAMP
+      description: The timestamp when a location first opened.

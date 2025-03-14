@@ -1,0 +1,10 @@
+version: "3"
+
+includes:
+  dbt:
+    taskfile: dbt/_taskfile.yml
+    dir: dbt
+  
+  dcm:
+    taskfile: dcm/_taskfile.yml
+    dir: dcm

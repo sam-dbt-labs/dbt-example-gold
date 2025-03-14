@@ -1,0 +1,4 @@
+datacontract-cli[databricks]==0.10.22
+datacontract-cli[snowflake]==0.10.22
+datacontract-cli[dbml]==0.10.22
+datacontract-cli[dbt]==0.10.22

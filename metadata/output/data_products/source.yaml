@@ -1,0 +1,40 @@
+dataProductSpecification: 0.0.1
+id: urn:dataproduct:project:jaffle-shop:dbt:jaffle-shop-output
+info:
+  title: dbt Jaffle Shop Output
+  description: Example Jaffle Shop OUTPUT Data provided by dbt/ created by dbt seed.
+  owner: enabling-team
+  status: development
+  archetype: consumer-aligned
+  maturity: managed
+outputPorts:
+  - id: urn:datacontract:project:jaffle-shop:dbt:output-model:calendar-databricks
+    name: Jaffle Shop OUTPUT Calendar Data Contract
+    description: Data Contract for Example Jaffle Shop OUTPUT Calendar Data provided
+      by Mars/ created by dbt build.
+    dataContractId: urn:datacontract:project:jaffle-shop:dbt:output-model:calendar
+    autoApprove: false
+    containsPii: false
+    type: databricks
+    server:
+      host: adb-4057509338801929.9.azuredatabricks.net
+      catalog: datagovernance_mvp
+      schema: jaffle_shop
+  - id: enablement_team_data_contract_id-databricks
+    name: jaffle_shop_gold
+    description: An example template to start drafting Contract First Designs
+    dataContractId: enablement_team_data_contract_id
+    autoApprove: false
+    containsPii: false
+    type: databricks
+    server:
+      host: adb-4057509338801929.9.azuredatabricks.net
+      catalog: datagovernance_mvp
+      schema: jaffle_shop
+tags:
+  - POC
+  - PROCESS
+links:
+  documentation: $gh_repo/README.md
+  catalog: https://catalog.example.com/search/search-queries/
+  repository: $gh_repo
